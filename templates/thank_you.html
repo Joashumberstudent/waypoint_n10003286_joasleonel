@@ -1,0 +1,100 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Thank You — Waypoint</title>
+
+    <link
+        rel="stylesheet"
+        href="{% static 'style.css' %}"
+    >
+
+</head>
+
+<body>
+
+    <header class="site-header">
+
+        <nav class="navbar">
+
+            <a href="{% url 'home' %}" class="logo">
+                Waypoint
+            </a>
+
+            <div class="nav-links">
+
+                <a href="{% url 'home' %}">
+                    Home
+                </a>
+
+                <a href="{% url 'report' %}">
+                    Report a Trail
+                </a>
+
+            </div>
+
+        </nav>
+
+    </header>
+
+
+    <main class="page-container">
+
+        <section class="success-card">
+
+            <div class="success-icon">
+                ✓
+            </div>
+
+            <p class="eyebrow">
+                Report received
+            </p>
+
+            <h1>
+                Thank you, {{ name }}!
+            </h1>
+
+            <p>
+                Your report for
+                <strong>{{ trail }}</strong>
+                has been received.
+            </p>
+
+            <p>
+                We appreciate your contribution
+                to the Waypoint community.
+            </p>
+
+            <a
+                href="{% url 'home' %}"
+                class="button"
+            >
+                Back to Home
+            </a>
+
+        </section>
+
+    </main>
+
+
+    <footer class="footer">
+
+        <p>
+            &copy; 2026 Waypoint.
+        </p>
+
+    </footer>
+
+</body>
+
+</html>

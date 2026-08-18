@@ -17,6 +17,17 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from . import views
+
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    # Django admin
+    path("admin/", admin.site.urls),
+
+    # WP-405
+    path("", views.home, name="home"),
+
+    path("report/", views.report, name="report"),
+
+    path("search/", views.search, name="search"),
 ]
