@@ -77,8 +77,9 @@
                     </td>
 
                     <td>
-                        <strong>{{ trail.name }}</strong>
-                    </td>
+                        <a href="{% url 'trail_detail' trail.id %}">
+                            <strong>{{ trail.name }}</strong>
+                        </a>
                     <td>
                         {{trail.park.name}}
                     <td>

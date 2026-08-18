@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ trail.name }} — Waypoint
+{% endblock %}
+
+{% block content %}
+
+<section class="trail-detail">
+
+    <h1>{{ trail.name }}</h1>
+
+    <p>
+        <strong>Park:</strong>
+        {{ trail.park.name }}
+    </p>
+
+    <p>
+        <strong>Region:</strong>
+        {{ trail.park.region }}
+    </p>
+
+    <p>
+        <strong>Distance:</strong>
+        {{ trail.distance|floatformat:1 }} km
+    </p>
+
+    <p>
+        <strong>Elevation:</strong>
+        {{ trail.elevation }} m
+    </p>
+
+    <p>
+        <strong>Difficulty:</strong>
+        {{ trail.difficulty|title }}
+    </p>
+
+    <p>
+        <strong>Status:</strong>
+        Open
+    </p>
+
+    <a href="{% url 'catalog' %}">
+        ← Back to catalog
+    </a>
+
+</section>
+
+{% endblock %}

@@ -9,152 +9,116 @@ from math import isclose
 # ============================================================
 
 class Distance:
-    """
-    A value object representing a non-negative distance.
+    CONVERSION = {
+        ("km", "mi"): 0.621371,
+        ("mi", "km"): 1.60934,
+    }
 
-    Mixed units:
-        Distances automatically convert the RIGHT operand
-        to the LEFT operand's unit.
-
-        Example:
-            Distance(5, "km") + Distance(1, "mi")
-
-        becomes:
-            5 km + 1.609344 km
-
-        Result:
-            Distance(6.609344, "km")
-
-    This approach makes arithmetic convenient while preserving
-    the unit of the left-hand operand.
-    """
-
-    KM_TO_MI = 0.621371192237334
-    MI_TO_KM = 1.609344
-
-    VALID_UNITS = {"km", "mi"}
-
-    def __init__(self, magnitude: float, unit: str):
+    def __init__(self, magnitude, unit):
         if magnitude < 0:
             raise ValueError("Distance cannot be negative.")
 
-        if unit not in self.VALID_UNITS:
+        if unit not in ("km", "mi"):
             raise ValueError("Unit must be 'km' or 'mi'.")
 
-        self._magnitude = float(magnitude)
+        self._magnitude = magnitude
         self._unit = unit
 
-    # --------------------------------------------------------
-    # Read-only accessors
-    # --------------------------------------------------------
-
     @property
-    def magnitude(self) -> float:
+    def magnitude(self):
         return self._magnitude
 
     @property
-    def unit(self) -> str:
+    def unit(self):
         return self._unit
 
-    # --------------------------------------------------------
-    # Conversion
-    # --------------------------------------------------------
-
-    def convert(self, target_unit: str) -> "Distance":
-        if target_unit not in self.VALID_UNITS:
+    def convert(self, target_unit):
+        if target_unit not in ("km", "mi"):
             raise ValueError("Unit must be 'km' or 'mi'.")
 
-        if target_unit == self.unit:
-            return Distance(self.magnitude, target_unit)
+        if target_unit == self._unit:
+            return Distance(self._magnitude, self._unit)
 
-        if self.unit == "km" and target_unit == "mi":
-            converted = self.magnitude * self.KM_TO_MI
-        else:
-            converted = self.magnitude * self.MI_TO_KM
+        factor = self.CONVERSION[
+            (self._unit, target_unit)
+        ]
 
-        return Distance(converted, target_unit)
+        return Distance(
+            self._magnitude * factor,
+            target_unit,
+        )
 
-    # --------------------------------------------------------
-    # Helper
-    # --------------------------------------------------------
-
-    def _other_in_my_unit(self, other: "Distance") -> "Distance":
+    def __add__(self, other):
         if not isinstance(other, Distance):
-            raise TypeError(
-                "Distance operations require another Distance."
-            )
+            return NotImplemented
 
-        return other.convert(self.unit)
-
-    # --------------------------------------------------------
-    # WP-202 — Arithmetic operators
-    # --------------------------------------------------------
-
-    def __add__(self, other: "Distance") -> "Distance":
-        other = self._other_in_my_unit(other)
+        if self.unit != other.unit:
+            other = other.convert(self.unit)
 
         return Distance(
             self.magnitude + other.magnitude,
             self.unit,
         )
 
-    def __sub__(self, other: "Distance") -> "Distance":
-        other = self._other_in_my_unit(other)
+    def __sub__(self, other):
+        if not isinstance(other, Distance):
+            return NotImplemented
+
+        if self.unit != other.unit:
+            other = other.convert(self.unit)
 
         result = self.magnitude - other.magnitude
 
         if result < 0:
-            raise ValueError("Distance cannot be negative.")
+            raise ValueError(
+                "Distance result cannot be negative."
+            )
 
-        return Distance(result, self.unit)
+        return Distance(
+            result,
+            self.unit,
+        )
 
-    # --------------------------------------------------------
-    # WP-202 — Comparisons
-    # --------------------------------------------------------
-
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other):
         if not isinstance(other, Distance):
             return NotImplemented
 
         other_converted = other.convert(self.unit)
 
-        return isclose(
-            self.magnitude,
-            other_converted.magnitude,
-            rel_tol=1e-9,
-            abs_tol=1e-9,
+        return abs(
+            self.magnitude - other_converted.magnitude
+        ) < 1e-9
+
+    def __lt__(self, other):
+        if not isinstance(other, Distance):
+            return NotImplemented
+
+        other_converted = other.convert(self.unit)
+
+        return (
+            self.magnitude
+            < other_converted.magnitude
         )
 
-    def __lt__(self, other: "Distance") -> bool:
-        other = self._other_in_my_unit(other)
-        return self.magnitude < other.magnitude
+    def __gt__(self, other):
+        if not isinstance(other, Distance):
+            return NotImplemented
 
-    def __gt__(self, other: "Distance") -> bool:
-        other = self._other_in_my_unit(other)
-        return self.magnitude > other.magnitude
+        other_converted = other.convert(self.unit)
 
-    def __le__(self, other: "Distance") -> bool:
-        return self == other or self < other
+        return (
+            self.magnitude
+            > other_converted.magnitude
+        )
 
-    def __ge__(self, other: "Distance") -> bool:
-        return self == other or self > other
-
-    # --------------------------------------------------------
-    # WP-202 — String representations
-    # --------------------------------------------------------
-
-    def __str__(self) -> str:
+    def __str__(self):
         return f"{self.magnitude:g} {self.unit}"
 
-    def __repr__(self) -> str:
+    def __repr__(self):
         return (
-            f"Distance("
-            f"{self.magnitude!r}, "
-            f"{self.unit!r}"
-            f")"
+            f"Distance({self.magnitude!r}, "
+            f"{self.unit!r})"
         )
-
-
 # ============================================================
 # WP-201 — Abstract Trail
 # ============================================================
