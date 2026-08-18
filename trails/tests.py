@@ -1,66 +1,122 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from .models import Trail
+from .models import Park, Trail
 
 
-class TrailModelTests(TestCase):
+class ParkModelTests(TestCase):
 
-    def test_trail_string(self):
-        trail = Trail.objects.create(
-            name="Mont Royal Loop",
-            distance_km=5.20,
-            elevation_gain=210,
-            difficulty=Trail.Difficulty.EASY,
-            is_open=True,
+    def test_park_string(self):
+        park = Park.objects.create(
+            name="Gatineau Park",
+            region="Outaouais",
         )
 
-        self.assertEqual(str(trail), "Mont Royal Loop")
+        self.assertEqual(
+            str(park),
+            "Gatineau Park (Outaouais)",
+        )
 
 
-class TrailCatalogTests(TestCase):
+class TrailRelationshipTests(TestCase):
 
     def setUp(self):
-        Trail.objects.create(
-            name="Short Open Trail",
-            distance_km=3.00,
+        self.park_one = Park.objects.create(
+            name="Mont Royal Park",
+            region="Montreal",
+        )
+
+        self.park_two = Park.objects.create(
+            name="Gatineau Park",
+            region="Outaouais",
+        )
+
+        self.trail_one = Trail.objects.create(
+            name="Trail One",
+            distance_km=5.00,
             elevation_gain=100,
             difficulty=Trail.Difficulty.EASY,
             is_open=True,
+            park=self.park_one,
         )
 
-        Trail.objects.create(
-            name="Long Open Trail",
-            distance_km=10.00,
-            elevation_gain=500,
-            difficulty=Trail.Difficulty.HARD,
+        self.trail_two = Trail.objects.create(
+            name="Trail Two",
+            distance_km=8.00,
+            elevation_gain=300,
+            difficulty=Trail.Difficulty.MODERATE,
             is_open=True,
+            park=self.park_two,
         )
 
-        Trail.objects.create(
+        self.closed_trail = Trail.objects.create(
             name="Closed Trail",
-            distance_km=1.00,
+            distance_km=2.00,
             elevation_gain=50,
             difficulty=Trail.Difficulty.EASY,
             is_open=False,
+            park=self.park_one,
         )
 
-    def test_catalog_only_shows_open_trails(self):
-        response = self.client.get(reverse("catalog"))
-
-        self.assertContains(response, "Short Open Trail")
-        self.assertContains(response, "Long Open Trail")
-        self.assertNotContains(response, "Closed Trail")
-
-    def test_catalog_orders_by_distance(self):
-        response = self.client.get(reverse("catalog"))
-
-        trails = response.context["trails"]
-
+    def test_trail_has_park(self):
         self.assertEqual(
-            list(trails.values_list("name", flat=True)),
-            [
-                "Short Open Trail",
-                "Long Open Trail",
-            ],
+            self.trail_one.park,
+            self.park_one,
+        )
+
+    def test_park_has_related_trails(self):
+        self.assertEqual(
+            self.park_one.trails.count(),
+            2,
+        )
+
+    def test_catalog_filters_by_park(self):
+        response = self.client.get(
+            reverse("catalog"),
+            {"park": self.park_one.id},
+        )
+
+        self.assertContains(
+            response,
+            "Trail One",
+        )
+
+        self.assertNotContains(
+            response,
+            "Trail Two",
+        )
+
+    def test_closed_trails_are_not_shown(self):
+        response = self.client.get(
+            reverse("catalog"),
+        )
+
+        self.assertContains(
+            response,
+            "Trail One",
+        )
+
+        self.assertContains(
+            response,
+            "Trail Two",
+        )
+
+        self.assertNotContains(
+            response,
+            "Closed Trail",
+        )
+
+    def test_catalog_displays_park(self):
+        response = self.client.get(
+            reverse("catalog"),
+        )
+
+        self.assertContains(
+            response,
+            "Mont Royal Park",
+        )
+
+        self.assertContains(
+            response,
+            "Gatineau Park",
         )

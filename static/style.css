@@ -61,6 +61,14 @@ body {
     font-weight: 700;
 }
 
+.page-section {
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 40px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+}
 .badge-open {
     font-weight: 600;
 }
@@ -70,7 +78,9 @@ body {
 }
 
 .section-header h1 {
-    margin-bottom: 0.5rem;
+    font-size: 2.8rem;
+    color: #0f172a;
+    margin-bottom: 10px;
 }
 
 .navbar {
@@ -343,8 +353,11 @@ body {
 
 .search-form {
     display: flex;
-    gap: 10px;
-    margin: 28px 0;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
 }
 
 .search-form input {

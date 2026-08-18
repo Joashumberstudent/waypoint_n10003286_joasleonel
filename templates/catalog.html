@@ -13,6 +13,42 @@
             Explore our collection of hiking trails.
         </p>
     </div>
+    <form method="get" class="search-form">
+
+        <label for="park">
+            Filter by park:
+        </label>
+
+        <select name="park" id="park">
+
+            <option value="">
+                All parks
+            </option>
+
+            {% for park in parks %}
+
+            <option
+                value="{{ park.id }}"
+                {% if selected_park.id == park.id %}selected{% endif %}
+            >
+                {{ park.name }}
+            </option>
+
+            {% endfor %}
+
+        </select>
+
+        <button type="submit" class="btn">
+            Filter
+        </button>
+
+    </form>
+    {% if selected_park %}
+        <p>
+            Showing trails in
+            <strong>{{ selected_park.name }}</strong>.
+        </p>
+    {% endif %}
 
     <div class="table-container">
 
@@ -22,6 +58,7 @@
                 <tr>
                     <th>#</th>
                     <th>Trail</th>
+                    <th>Park</th>                   
                     <th>Distance</th>
                     <th>Elevation</th>
                     <th>Difficulty</th>
@@ -42,7 +79,8 @@
                     <td>
                         <strong>{{ trail.name }}</strong>
                     </td>
-
+                    <td>
+                        {{trail.park.name}}
                     <td>
                         {{ trail.distance|floatformat:1 }} km
                     </td>
