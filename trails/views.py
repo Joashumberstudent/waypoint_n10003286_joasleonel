@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 
 from .models import Park, Trail
 
@@ -6,12 +6,11 @@ from .models import Park, Trail
 def catalog(request):
     park_id = request.GET.get("park")
 
-    trails = Trail.objects.filter(
-        is_open=True
-    ).select_related(
-        "park"
-    ).order_by(
-        "distance_km"
+    trails = (
+        Trail.objects
+        .filter(is_open=True)
+        .select_related("park")
+        .order_by("distance_km")
     )
 
     selected_park = None
@@ -37,4 +36,20 @@ def catalog(request):
         request,
         "catalog.html",
         context,
+    )
+
+
+def trail_detail(request, trail_id):
+    trail = get_object_or_404(
+        Trail.objects.select_related("park"),
+        id=trail_id,
+        is_open=True,
+    )
+
+    return render(
+        request,
+        "trail_detail.html",
+        {
+            "trail": trail,
+        },
     )
