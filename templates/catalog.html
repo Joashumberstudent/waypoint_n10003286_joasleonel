@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Trail Catalog — Waypoint{% endblock %}
+
+{% block content %}
+
+<section class="page-section">
+
+    <div class="section-header">
+        <h1>Trail Catalog</h1>
+
+        <p>
+            Explore our collection of hiking trails.
+        </p>
+    </div>
+
+    <div class="table-container">
+
+        <table class="trail-table">
+
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Trail</th>
+                    <th>Distance</th>
+                    <th>Elevation</th>
+                    <th>Difficulty</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for trail in trails %}
+
+                <tr>
+
+                    <td>
+                        {{ forloop.counter }}
+                    </td>
+
+                    <td>
+                        <strong>{{ trail.name }}</strong>
+                    </td>
+
+                    <td>
+                        {{ trail.distance|floatformat:1 }} km
+                    </td>
+
+                    <td>
+                        {{ trail.elevation }} m
+                    </td>
+
+                    <td>
+
+                        {% if trail.difficulty == "expert" %}
+                            <span class="badge badge-hard">
+                                HARD
+                            </span>
+
+                        {% else %}
+                            <span class="badge">
+                                {{ trail.difficulty|title }}
+                            </span>
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        {% if not trail.is_open %}
+
+                            <span class="badge badge-closed">
+                                CLOSED
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge badge-open">
+                                OPEN
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="6">
+                        No trails available.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+{% endblock %}

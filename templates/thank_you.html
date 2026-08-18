@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Thank You — Waypoint{% endblock %}
+
+{% block content %}
+
+<section class="page-section thank-you">
+
+    <h1>Thank you, {{ name }}!</h1>
+
+    <p>
+        Your report for
+        <strong>{{ trail }}</strong>
+        has been received.
+    </p>
+
+    <a href="{% url 'catalog' %}" class="btn">
+        Back to Trails
+    </a>
+
+</section>
+
+{% endblock %}

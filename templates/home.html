@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Home — Waypoint{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+    <h1>{{ greeting }}</h1>
+
+    <p>
+        Discover trails, plan your adventures, and explore the outdoors.
+    </p>
+
+    <a href="{% url 'catalog' %}" class="btn">
+        Explore Trails
+    </a>
+</section>
+
+{% endblock %}
