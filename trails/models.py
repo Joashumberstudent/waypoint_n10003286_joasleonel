@@ -1,6 +1,14 @@
 from django.db import models
 
 
+class Park(models.Model):
+    name = models.CharField(max_length=200)
+    region = models.CharField(max_length=200)
+
+    def __str__(self):
+        return f"{self.name} ({self.region})"
+
+
 class Trail(models.Model):
     class Difficulty(models.TextChoices):
         EASY = "easy", "Easy"
@@ -26,14 +34,21 @@ class Trail(models.Model):
     is_open = models.BooleanField(default=True)
 
     added = models.DateTimeField(auto_now_add=True)
+
+    park = models.ForeignKey(
+        Park,
+        on_delete=models.PROTECT,
+        related_name="trails",
+        null=True,
+    )
+
     @property
     def distance(self):
-            return self.distance_km
+        return self.distance_km
+
     @property
     def elevation(self):
-            return self.elevation_gain
+        return self.elevation_gain
 
     def __str__(self):
         return self.name
-
-    
