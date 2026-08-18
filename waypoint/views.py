@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-
+from trails.models import Trail
 def home(request):
     context = {
         "greeting": "Welcome to Waypoint!"
@@ -40,50 +40,11 @@ def search(request):
 
 
 def catalog(request):
-    trails = [
-        {
-            "name": "Mont Royal Loop",
-            "distance": 5.2,
-            "elevation": 210,
-            "difficulty": "easy",
-            "is_open": True,
-        },
-        {
-            "name": "Lac Tremblant Trail",
-            "distance": 8.7,
-            "elevation": 340,
-            "difficulty": "moderate",
-            "is_open": True,
-        },
-        {
-            "name": "Eagle Peak",
-            "distance": 12.4,
-            "elevation": 680,
-            "difficulty": "hard",
-            "is_open": False,
-        },
-        {
-            "name": "Pine Ridge",
-            "distance": 4.6,
-            "elevation": 150,
-            "difficulty": "easy",
-            "is_open": True,
-        },
-        {
-            "name": "Black Mountain",
-            "distance": 15.8,
-            "elevation": 920,
-            "difficulty": "expert",
-            "is_open": True,
-        },
-        {
-            "name": "River Valley",
-            "distance": 7.3,
-            "elevation": 280,
-            "difficulty": "moderate",
-            "is_open": False,
-        },
-    ]
+    trails = Trail.objects.filter(
+        is_open=True
+    ).order_by(
+        "distance_km"
+    )
 
     context = {
         "trails": trails,
